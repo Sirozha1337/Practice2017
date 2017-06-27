@@ -1,4 +1,5 @@
 var path = require('path');
+var Event = require('./models/event.js');
 
 module.exports = function(app, passport){
     // =====================================
@@ -18,12 +19,30 @@ module.exports = function(app, passport){
             res.redirect('/');
     });
 
+    app.post('/newEvent', function(req, res){
+        console.log(req.user);
+        var newEvent = new Event.Event(req.body.name, req.body.description, req.user.id);
+        newEvent.save();
+        res.end(JSON.stringify(newEvent));
+    });
+
+    app.get('/getEventsByOwner', function(req, res){
+        Event.findEventsByOwner(req.user.id, function(status){
+            if (status) {
+                console.log(status);
+                return done(null, status);
+            }
+            else
+                return done(null, null);
+        });
+    });
+
     app.get('/currentUser', function(req, res){
         console.log(req.user);
         if(req.user)
             res.end(JSON.stringify(req.user));
         else
-            res.end('sdfdsf');
+            res.end(JSON.stringify(undefined));
     });
 
     app.get('/auth/facebook', passport.authenticate('facebook', {scope: ['email']}));
@@ -39,8 +58,19 @@ module.exports = function(app, passport){
         passport.authenticate('google', { successRedirect: '/#!securedPage', 
                                     failureRedirect: '/' }));
     
+    app.post('/login', passport.authenticate('local-login', {
+		successRedirect : '/#!securedPage', // redirect to the secure profile section
+		failureRedirect : '/'
+	}));
+
+    app.post('/signup', passport.authenticate('local-signup', {
+		successRedirect : '/', // redirect to the secure profile section
+		failureRedirect : '/#!register'
+	}));
+    
     app.get('/logout', function(req, res){
             req.logout();
             res.redirect('/');
     });
+
 }

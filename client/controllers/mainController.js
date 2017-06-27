@@ -15,4 +15,7 @@ app.config(function($routeProvider){
     .when('/page', {
         templateUrl : "/templates/page.htm"
     })
+    .when('/register',{
+        templateUrl : "/templates/signupForm.htm"
+    })
 });

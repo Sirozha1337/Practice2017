@@ -18,12 +18,7 @@ module.exports = {
             this.email = email;
             var user = this;
             if(password !== undefined)
-                bcrypt.hash(password, null, null, function(err, hash) {
-                    if (err)
-                        return next(err);
-
-                    user.passwordHash = hash;
-                });
+                this.passwordHash = bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
             else
                 this.passwordHash = null;
         }
@@ -42,6 +37,11 @@ module.exports = {
                     }
             });
         }
+
+    },
+    validPassword: function(hash, password){
+            console.log(bcrypt.compareSync(password, hash));
+            return bcrypt.compareSync(password, hash);
     },
     // find user in db by his email
     findUserByEmail: function (email, callback){
