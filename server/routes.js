@@ -7,20 +7,10 @@ module.exports = function(app, passport){
 	// =====================================
 
 	app.get('/', function(req, res) {
-        console.log(path.join(__dirname, '../client', 'index.html'));
         res.sendFile(path.join(__dirname, '../client', 'index.html'));
 	});
 
-    app.get('/securedPage', function(req, res){
-        console.log(req.user);
-        if(req.isAuthenticated())
-            res.sendFile(path.join(__dirname, '../client', 'securedPage.html'));
-        else
-            res.redirect('/');
-    });
-
     app.post('/newEvent', function(req, res){
-        console.log(req.user);
         var newEvent = new Event.Event(req.body.name, req.body.description, req.user.id);
         newEvent.save();
         res.end(JSON.stringify(newEvent));
@@ -63,14 +53,39 @@ module.exports = function(app, passport){
 		failureRedirect : '/'
 	}));
 
+    app.post('/newInvite', function(req, res){
+        // req.body.email - send email
+        console.log('new Invite:');
+        console.log(req.body);
+        Event.createInvite(req.body.eventId, req.body.email);
+      //  Event.findEventsByOwner(req.user.id, function(status){console.log(status);});
+        res.end();
+    });
+
+    app.get('/myEvents', function(req, res){
+        console.log("my events");
+        console.log(req.user.id);
+        Event.findEventsByUser(req.user.id, function(err, rows){
+            if(err)
+                console.log(err);
+            console.log(rows); 
+        });
+        res.end();
+    });
+
+    app.get('/invite?', function(req, res){
+        console.log(req.query);
+        res.redirect('/?invite='+ req.query.code);
+    });
+
     app.post('/signup', passport.authenticate('local-signup', {
 		successRedirect : '/', // redirect to the secure profile section
 		failureRedirect : '/#!register'
 	}));
     
     app.get('/logout', function(req, res){
-            req.logout();
-            res.redirect('/');
+        req.logout();
+        res.redirect('/');
     });
 
 }

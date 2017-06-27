@@ -1,5 +1,4 @@
-var sqlite3 = require('sqlite3');
-var db = new sqlite3.Database('./users.db');
+var db = require('../config/database.js');
 var bcrypt  = require('bcrypt-nodejs');
 
 // Establish database connection
@@ -32,6 +31,7 @@ module.exports = {
                     else{
                         console.log('New user ID ' + this.lastID);
                         user.id = this.lastID;
+                       // db.run("UPDATE invites SET userId=?, inviteCode=NULL WHERE =?", user.email);
                     }
             });
         }

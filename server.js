@@ -17,13 +17,13 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json()) 
 
-// Use sessions
+// Use sessions 
 app.use(session({
     secret: 'anything',
     resave: true,
     saveUninitialized: true
   }
-));
+)); 
 
 // Use passport js
 app.use(passport.initialize()); 

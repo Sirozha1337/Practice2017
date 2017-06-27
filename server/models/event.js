@@ -1,9 +1,9 @@
-var sqlite3 = require('sqlite3');
-var db = new sqlite3.Database('./users.db');
+var db = require('../config/database.js');
+var bcrypt  = require('bcrypt-nodejs');
 
 // Establish database connection
 db.serialize(function() {
-   // db.run("DROP TABLE users");
+   // db.run("DROP TABLE events");
     db.run("CREATE TABLE IF NOT EXISTS events (name TEXT NOT NULL, description TEXT NOT NULL, ownerId INTEGER NOT NULL, id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)");
     db.run("CREATE TABLE IF NOT EXISTS invites (eventId INTEGER NOT NULL, userId INTEGER NULL, inviteCode TEXT NULL)");
 });
@@ -30,7 +30,7 @@ module.exports = {
                         console.log('New event ID ' + this.lastID);
                         event.id = this.lastID;
                     }
-                });
+            });
         }
     },
     findEventsByOwner: function (ownerId, callback){
@@ -57,6 +57,26 @@ module.exports = {
                 return callback(false);
             }
             return callback(rows);
+        });
+    },
+    createInvite: function(eventId, email){
+        inviteCode = bcrypt.hashSync(eventId+email);
+        console.log(inviteCode);
+        db.run("INSERT INTO invites(eventId, inviteCode) VALUES(?, ?)", eventId, inviteCode);
+        db.all("SELECT users.id from users WHERE users.email=?", email, function(err, rows){
+            console.log(rows);
+            var userId = rows[0].id;
+            db.run("UPDATE invites SET userId=?, inviteCode=NULL WHERE invites.inviteCode=?", userId, inviteCode);
+        });
+    },
+    findEventsByUser: function(userId, callback){
+        db.run("SELECT * FROM users", function(err, rows){
+            console.log('all rows');
+            console.log(err);
+            console.log(rows);
+        });
+        db.run("SELECT events.* FROM events, invites WHERE invites.userId=? AND events.id=invites.eventId", userId, function(err, rows){
+            callback(err, rows);
         });
     }
 }
