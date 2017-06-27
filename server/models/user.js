@@ -1,7 +1,9 @@
+"use strict";
 var sqlite3 = require('sqlite3');
 var db = new sqlite3.Database('./users.db');
 var bcrypt  = require('bcrypt-nodejs');
 
+"use strict"
 // Establish database connection
 db.serialize(function() {
    // db.run("DROP TABLE users");
