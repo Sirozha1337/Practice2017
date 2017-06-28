@@ -4,9 +4,11 @@ var LocalStrategy   = require('passport-local').Strategy;
 
 var configAuth = require('./auth');
 var User = require('../models/user.js');
+var url = require('url');
+
 
 module.exports = function(passport){
-
+    /* Local registration strategy */
     passport.use('local-signup', new LocalStrategy({
         usernameField : 'email',
         passwordField : 'password',
@@ -33,7 +35,6 @@ module.exports = function(passport){
     function(req, email, password, done){
         User.findUserByEmail(email, function(status){
             var user = status[0];
-            console.log(user);
             if(!user)
                 return done(null, false, {message: 'no user with this email'});
             
@@ -52,7 +53,6 @@ module.exports = function(passport){
     function(accessToken, refreshToken, profile, done) {
         User.findUserByEmail(profile.emails[0].value, function(status){
             if (status) {
-                console.log(status);
                 return done(null, status[0]);
             }
             else {
@@ -68,30 +68,35 @@ module.exports = function(passport){
         clientID: configAuth.facebookAuth.clientID,
         clientSecret: configAuth.facebookAuth.clientSecret,
         callbackURL: configAuth.facebookAuth.callbackURL,
-        profileFields: ['id', 'emails', 'name']
+        profileFields: ['id', 'emails', 'name'],
+        passReqToCallback : true
     },
-    function(accessToken, refreshToken, profile, done) {
+    function(req, accessToken, refreshToken, profile, done) {
+        var parsedUrl = url.parse(req.headers.referer, true);
+        var invite = parsedUrl.query.invite;
+        console.log('Invite code ' + invite);
         User.findUserByEmail(profile.emails[0].value, function(status){
             if (status) {
                 console.log(status);
+                if(invite)
+                    User.addToEvent(status[0].id, invite);
                 return done(null, status[0]);
             }
             else {
                 var newUser = new User.User(profile.name.familyName + ' ' + profile.name.givenName, profile.emails[0].value);
-                newUser.save();
+                newUser.save(function(user){
+                    User.addToEvent(user.id, invite);
+                });
                 return done(null, newUser);
             }
         });
-    }
-    ));
+    }));
 
     passport.serializeUser(function(user, done) {
-        console.log('Serialize user called.');
         return done(null, user);
     });
 
     passport.deserializeUser(function(user, done) {
-        console.log('Deserialize user called.');
         User.findUserByEmail(user.email, function(status){
             if (status) {
                 return done(null, status[0]);

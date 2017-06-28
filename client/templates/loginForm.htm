@@ -1,11 +1,12 @@
-<form action="/login" method="post" ng-controller="mainController">
+<form ng-controller="localLoginCtrl" ng-submit="localLogin()">
+    <p ng-bind="localLoginError"></p>
     <div>
         <label>Email:</label>
-        <input type="text" name="email"/>
+        <input ng-model="localEmail" type="text" name="email"/>
     </div>
     <div>
         <label>Password:</label>
-        <input type="password" name="password"/>
+        <input ng-model="localPass" type="password" name="password"/>
     </div>
     <div>
         <input type="submit" value="Log In"/>

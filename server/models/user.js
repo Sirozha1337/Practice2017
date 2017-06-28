@@ -22,24 +22,22 @@ module.exports = {
         }
 
         // Save user model to database
-        save(){
+        save(callback){
             var user = this;
             db.run("INSERT INTO users(name, email, passwordHash) VALUES ('" + this.name + "','" + this.email + "','" + this.passwordHash + "')", 
                 function(err){
                     if(err){
-                        console.log('DB error');
+                        console.log('DB error:' + err);
                     }
                     else{
-                        console.log('New user ID ' + this.lastID);
                         user.id = this.lastID;
-                       // db.run("UPDATE invites SET userId=?, inviteCode=NULL WHERE =?", user.email);
+                        callback(user);
                     }
             });
         }
 
     },
     validPassword: function(hash, password){
-            console.log(bcrypt.compareSync(password, hash));
             return bcrypt.compareSync(password, hash);
     },
     // find user in db by his email
@@ -50,10 +48,12 @@ module.exports = {
                 return callback(false);
             }
             if(rows.length == 0){
-                console.log('no user');
                 return callback(false);
             }
             return callback(rows);
         });
+    },
+    addToEvent : function (userId, inviteCode){
+        db.run("UPDATE invites SET userId=?, inviteCode=NULL WHERE inviteCode=?", user.id, inviteCode);
     }
 }

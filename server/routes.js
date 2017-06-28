@@ -9,19 +9,7 @@ module.exports = function(app, passport){
         });
     });
 
-    app.get('/getEventsByOwner', function(req, res){
-        Event.findEventsByOwner(req.user.id, function(status){
-            if (status) {
-                console.log(status);
-                return done(null, status);
-            }
-            else
-                return done(null, null);
-        });
-    });
-
     app.get('/currentUser', function(req, res){
-        console.log(req.user);
         if(req.user)
             res.end(JSON.stringify(req.user));
         else
@@ -41,10 +29,32 @@ module.exports = function(app, passport){
         passport.authenticate('google', { successRedirect: '/#!securedPage', 
                                     failureRedirect: '/' }));
     
-    app.post('/login', passport.authenticate('local-login', {
-		successRedirect : '/#!securedPage', // redirect to the secure profile section
-		failureRedirect : '/'
-	}));
+    app.post('/login', function(req, res, next){
+        passport.authenticate('local-login', {
+            successRedirect : '/#!securedPage', // redirect to the secure profile section
+            failureRedirect : '/'
+	    }, function(err, user, info){
+            /* If user exists */
+            if(user){
+                /* Login user */
+                req.logIn(user, function(err){
+                    if(err){
+                        return next(err);
+                    }
+                    /* Signal about wrong password */
+                    if(user == false){
+                        res.status(401).json(info.message);  
+                    } else {
+                        res.json(user.id);
+                    }
+                });
+            }
+            /* Signal about wrong email */
+            else{
+                res.status(401).json(info.message);  
+            }
+        })(req, res, next);
+    });
 
     app.post('/newInvite', function(req, res){
         console.log('new Invite:');
@@ -53,18 +63,11 @@ module.exports = function(app, passport){
     });
 
     app.get('/myEvents', function(req, res){
-        console.log("my events");
-        console.log(req.user.id);
         Event.findEventsByUser(req.user.id, function(err, rows){
             if(err)
                 console.log(err);
             res.end(JSON.stringify(rows));
         });
-    });
-
-    app.get('/invite?', function(req, res){
-        console.log(req.query);
-        res.redirect('/?invite='+ req.query.code);
     });
 
     app.post('/signup', passport.authenticate('local-signup', {
