@@ -1,5 +1,13 @@
 This is a secured page
 <a href="/#!page">Go to another page</a>
-<button ng-click="addEvent()">Add event</button>
-
+<br><button ng-click="addEvent()">Add event</button>
+<div ng-repeat="x in events">
+  <p>
+    {{x.name}} {{x.description}} <br><button ng-click="addPerson($index)">Invite person</button>
+  </p>
+  <div ng-show="id==$index">
+    Email: <input ng-model="emails[$index]">
+     <button ng-click="postInvite($index)">Invite</button>
+  </div>
+</div>
 <div ng-include="'/templates/logoutForm.htm'"></div>

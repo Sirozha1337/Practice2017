@@ -33,6 +33,8 @@ app.controller('LoginCtrl', function($scope, $rootScope, $http) {
 });
 
 app.controller('securedPageCtrl', function($scope, $rootScope, $http, $location) {
+    $scope.id = -1;
+    $scope.emails = [];
     if(typeof $rootScope.user == 'undefined'){
 	$http.get("/currentUser").then(function(response) {
 	    if(response.data === '')
@@ -40,11 +42,41 @@ app.controller('securedPageCtrl', function($scope, $rootScope, $http, $location)
 	    else{
 		$scope.user = response.data;
 		$rootScope.user = $scope.user;
+		if(typeof $rootScope.events == 'undefined'){
+		    $http.get("/myEvents").then(function(eventResponse) {
+			if(response.data === '')
+			    $rootScope.events = [];
+			else{
+			    $rootScope.events = eventResponse.data;
+			}
+			$scope.events = $rootScope.events;
+		    });
+		}
 	    }
 	});
     }
     $scope.addEvent = function() {
 	$location.url('/addEvent');
+    }
+
+    $scope.addPerson = function(index) {
+	if($scope.id == index)
+	    $scope.id = -1;
+	else{
+	    $scope.emails[index] = "";
+	    $scope.id = index;
+	}
+    }
+    $scope.postInvite = function(index) {
+	var newinvite = {};
+	newinvite.email = $scope.emails[index];
+	console.log($scope.emails[index]);
+	newinvite.eventid = $scope.events[index]["id"];
+	console.log($scope.events[index]["id"]);
+	$http.post('/newEvent', newinvite).then(function(response) {
+	    $scope.id = -1;
+	    $scope.emails[index] = "";
+	});
     }
 });
 
@@ -55,7 +87,17 @@ app.controller('NewEventFormCtrl', function($scope, $rootScope, $http, $location
 		$location.url('/');
 	    else{
 		$scope.user = response.data;
-		$rootScope.user = $scope.user; 
+		$rootScope.user = $scope.user;
+		if(typeof $rootScope.events == 'undefined'){
+		    $http.get("/myEvents").then(function(eventResponse) {
+			if(response.data === '')
+			    $rootScope.events = [];
+			else{
+			    $rootScope.events = eventResponse.data;
+			}
+			$scope.events = $rootScope.events;
+		    });
+		}
 	    }
 	});
     }
@@ -65,10 +107,16 @@ app.controller('NewEventFormCtrl', function($scope, $rootScope, $http, $location
 	newevent.name = $scope.name;
 	newevent.description = $scope.desc;
 	$http.post('/newEvent', newevent).then(function(response) {
+	    $rootScope.events.unshift(response.data);
 	    $location.url('/securedPage');
 	});
     }
     
+});
+
+app.controller('NewPersonFormCtrl', function($scope, $rootScope, $http, $location) {
+    if(typeof $rootScope.eventId == 'undefined')
+	$location.url('/securedPage');
 });
 
 app.controller('SignInCtrl', function($scope, $rootScope, $http, $location) {
