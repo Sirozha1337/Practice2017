@@ -1,8 +1,11 @@
 var nodemailer = require('nodemailer');
 
 var transporter = nodemailer.createTransport({
-    host: 'mail.cs.karelia.ru',
-    port: 25
+    service: "Gmail",
+    auth: {
+        user: "practicejsinvite@gmail.com",
+        pass: "practice2017"
+    }
 });
 
 module.exports = {
