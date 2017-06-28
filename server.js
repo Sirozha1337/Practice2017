@@ -9,7 +9,6 @@ var passport = require('passport');
 var passportConfig = require('./server/config/passport');
 passportConfig(passport);
 
-
 app.use(express.static(__dirname + '/client/'));
 
 // Cookie and request body parsers

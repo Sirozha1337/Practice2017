@@ -4,8 +4,8 @@ var bcrypt = require('bcrypt-nodejs');
 var mail = require('../config/mail.js');
 // Establish database connection
 db.serialize(function() {
-   // db.run("DROP TABLE events");
-   // db.run("DROP TABLE invites");
+  //  db.run("DROP TABLE events");
+  //  db.run("DROP TABLE invites");
     db.run("CREATE TABLE IF NOT EXISTS events (name TEXT NOT NULL, description TEXT NOT NULL, ownerId INTEGER NOT NULL, id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)");
     db.run("CREATE TABLE IF NOT EXISTS invites (eventId INTEGER NOT NULL, userId INTEGER NULL, inviteCode TEXT NULL)");
 });
@@ -92,7 +92,7 @@ module.exports = {
         });
     },
     findEventsByUser: function(userId, callback){
-        db.all("SELECT events.* FROM events INNER JOIN invites ON events.id=invites.eventId WHERE invites.userId=? UNION SELECT * FROM events WHERE events.ownerId=?", userId, userId, function(err, rows){
+        db.all("SELECT events.* FROM events INNER JOIN invites ON events.id=invites.eventId WHERE invites.userId=? UNION SELECT * FROM events WHERE events.ownerId=? ORDER BY events.id DESC", userId, userId, function(err, rows){
             callback(err, rows);
         });
     }
