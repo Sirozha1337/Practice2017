@@ -71,9 +71,9 @@ app.controller('securedPageCtrl', function($scope, $rootScope, $http, $location)
 	var newinvite = {};
 	newinvite.email = $scope.emails[index];
 	console.log($scope.emails[index]);
-	newinvite.eventid = $scope.events[index]["id"];
+	newinvite.eventId = $scope.events[index]["id"];
 	console.log($scope.events[index]["id"]);
-	$http.post('/newEvent', newinvite).then(function(response) {
+	$http.post('/newInvite', newinvite).then(function(response) {
 	    $scope.id = -1;
 	    $scope.emails[index] = "";
 	});
