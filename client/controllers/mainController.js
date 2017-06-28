@@ -65,8 +65,7 @@ app.controller('NewEventFormCtrl', function($scope, $rootScope, $http, $location
 	newevent.name = $scope.name;
 	newevent.description = $scope.desc;
 	$http.post('/newEvent', newevent).then(function(response) {
-	    //$rootScope.events.unshift(response.data)
-	    console.log(response.data);
+	    $location.url('/securedPage');
 	});
     }
     

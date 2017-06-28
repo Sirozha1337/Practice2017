@@ -1,0 +1,2 @@
+Name: <input ng-model="name">  <br>
+<p><b>Description:</b></p> <textarea rows="10" cols="10" ng-model="desc"></textarea> <br>
