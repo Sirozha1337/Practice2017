@@ -18,7 +18,7 @@ module.exports = {
             this.ownerId = ownerId;
         }
 
-        save(){
+        save(callback){
             var event = this;
             db.run("INSERT INTO events(name, description, ownerId) VALUES(?, ?, ?)", 
                 this.name, 
@@ -31,6 +31,7 @@ module.exports = {
                     else{
                         console.log('New event ID ' + this.lastID);
                         event.id = this.lastID;
+                        callback(event);
                     }
             });
         }
