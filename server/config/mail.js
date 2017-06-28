@@ -10,7 +10,7 @@ var transporter = nodemailer.createTransport({
 
 module.exports = {
     mailOptions:{
-        from: 'chernyae@cs.karelia.ru',
+        from: 'practicejsinvite@gmail.com',
         subject: 'Invite to event'
     },
     mailer: transporter
