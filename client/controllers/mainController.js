@@ -22,6 +22,10 @@ app.config(function($routeProvider){
         templateUrl : "/templates/signupForm.htm",
         controller: 'SignInCtrl'
     })
+    .when('/addEvent',{
+        templateUrl : "/templates/newEventForm.htm",
+        controller: 'NewEventFormCtrl'
+    })
 });
 
 app.controller('LoginCtrl', function($scope, $rootScope, $http) {
@@ -29,25 +33,50 @@ app.controller('LoginCtrl', function($scope, $rootScope, $http) {
 });
 
 app.controller('securedPageCtrl', function($scope, $rootScope, $http, $location) {
-    $http.get("/currentUser").then(function(response) {
-	if(response.data === '')
-	    $location.url('/');
-	else
-	    $scope.user = response.data;
-    });
+    if(typeof $rootScope.user == 'undefined'){
+	$http.get("/currentUser").then(function(response) {
+	    if(response.data === '')
+		$location.url('/');
+	    else{
+		$scope.user = response.data;
+		$rootScope.user = $scope.user;
+	    }
+	});
+    }
+    $scope.addEvent = function() {
+	$location.url('/addEvent');
+    }
 });
 
-app.controller('PageCtrl', function($scope, $rootScope, $http, $location) {
-    $http.get("/currentUser").then(function(response) {
-	if(response.data === '')
-	    $location.url('/');
-	else
-	    $scope.user = response.data;
-	
-    });
+app.controller('NewEventFormCtrl', function($scope, $rootScope, $http, $location) {
+    if(typeof $rootScope.user == 'undefined'){
+	$http.get("/currentUser").then(function(response) {
+	    if(response.data === '')
+		$location.url('/');
+	    else{
+		$scope.user = response.data;
+		$rootScope.user = $scope.user; 
+	    }
+	});
+    }
+
+    $scope.postEvent = function() {
+	var newevent = {};
+	newevent.name = $scope.name;
+	newevent.description = $scope.desc;
+	$http.post('/newEvent', newevent).then(function(response) {
+	    //$rootScope.events.unshift(response.data)
+	    console.log(response.data);
+	});
+    }
+    
 });
 
 app.controller('SignInCtrl', function($scope, $rootScope, $http, $location) {
+
+});
+
+app.controller('PageCtrl', function($scope, $rootScope, $http, $location) {
 
 });
 
