@@ -6,14 +6,11 @@ module.exports = function(app, passport){
 	// HOME PAGE (with login links) ========
 	// =====================================
 
-	app.get('/', function(req, res) {
-        res.sendFile(path.join(__dirname, '../client', 'index.html'));
-	});
-
     app.post('/newEvent', function(req, res){
         var newEvent = new Event.Event(req.body.name, req.body.description, req.user.id);
-        newEvent.save();
-        res.end(JSON.stringify(newEvent));
+        newEvent.save(function(result){
+            res.end(JSON.stringify(result));
+        });
     });
 
     app.get('/getEventsByOwner', function(req, res){
@@ -65,9 +62,8 @@ module.exports = function(app, passport){
         Event.findEventsByUser(req.user.id, function(err, rows){
             if(err)
                 console.log(err);
-            console.log(rows); 
+            res.end(JSON.stringify(rows));
         });
-        res.end();
     });
 
     app.get('/invite?', function(req, res){

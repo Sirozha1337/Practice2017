@@ -18,7 +18,7 @@ module.exports = {
             this.ownerId = ownerId;
         }
 
-        save(){
+        save(callback){
             var event = this;
             db.run("INSERT INTO events(name, description, ownerId) VALUES(?, ?, ?)", 
                 this.name, 
@@ -31,6 +31,7 @@ module.exports = {
                     else{
                         console.log('New event ID ' + this.lastID);
                         event.id = this.lastID;
+                        callback(event);
                     }
             });
         }
@@ -89,7 +90,7 @@ module.exports = {
         });
     },
     findEventsByUser: function(userId, callback){
-        db.all("SELECT events.* FROM events, invites WHERE invites.userId=? AND events.id=invites.eventId UNION SELECT * FROM events WHERE events.ownerId=?", userId, userId, function(err, rows){
+        db.all("SELECT events.* FROM events INNER JOIN invites ON events.id=invites.eventId WHERE invites.userId=? UNION SELECT * FROM events WHERE events.ownerId=?", userId, userId, function(err, rows){
             callback(err, rows);
         });
     }
