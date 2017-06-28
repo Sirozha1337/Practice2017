@@ -54,11 +54,8 @@ module.exports = function(app, passport){
 	}));
 
     app.post('/newInvite', function(req, res){
-        // req.body.email - send email
         console.log('new Invite:');
-        console.log(req.body);
         Event.createInvite(req.body.eventId, req.body.email);
-      //  Event.findEventsByOwner(req.user.id, function(status){console.log(status);});
         res.end();
     });
 
