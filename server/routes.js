@@ -65,9 +65,8 @@ module.exports = function(app, passport){
         Event.findEventsByUser(req.user.id, function(err, rows){
             if(err)
                 console.log(err);
-            console.log(rows); 
+            res.end(JSON.stringify(rows));
         });
-        res.end();
     });
 
     app.get('/invite?', function(req, res){

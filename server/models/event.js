@@ -89,7 +89,7 @@ module.exports = {
         });
     },
     findEventsByUser: function(userId, callback){
-        db.all("SELECT events.* FROM events, invites WHERE invites.userId=? AND events.id=invites.eventId UNION SELECT * FROM events WHERE events.ownerId=?", userId, userId, function(err, rows){
+        db.all("SELECT events.* FROM events INNER JOIN invites ON events.id=invites.eventId WHERE invites.userId=? UNION SELECT * FROM events WHERE events.ownerId=?", userId, userId, function(err, rows){
             callback(err, rows);
         });
     }
