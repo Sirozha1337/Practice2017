@@ -2,10 +2,6 @@ var path = require('path');
 var Event = require('./models/event.js');
 
 module.exports = function(app, passport){
-    // =====================================
-	// HOME PAGE (with login links) ========
-	// =====================================
-
     app.post('/newEvent', function(req, res){
         var newEvent = new Event.Event(req.body.name, req.body.description, req.user.id);
         newEvent.save(function(result){
@@ -72,7 +68,7 @@ module.exports = function(app, passport){
     });
 
     app.post('/signup', passport.authenticate('local-signup', {
-		successRedirect : '/', // redirect to the secure profile section
+		successRedirect : '/', 
 		failureRedirect : '/#!register'
 	}));
     

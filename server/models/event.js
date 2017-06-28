@@ -1,7 +1,7 @@
 "use strict";
 var db = require('../config/database.js');
 var bcrypt = require('bcrypt-nodejs');
-var email = require('../config/mail.js');
+var mail = require('../config/mail.js');
 // Establish database connection
 db.serialize(function() {
    // db.run("DROP TABLE events");
@@ -66,6 +66,8 @@ module.exports = {
         /* Create invite code */
         var inviteCode = bcrypt.hashSync(eventId+email);
 
+        console.log(mail.mailOptions);
+
         /* Save invitation to database */
         db.run("INSERT INTO invites(eventId, inviteCode) VALUES(?, ?)", eventId, inviteCode);
 
@@ -77,12 +79,12 @@ module.exports = {
             }
             else{
                 /* Get mailing options */
-                var ops = email.mailOptions;
+                var ops = mail.mailOptions;
                 ops.to = email;
                 ops.text = 'http://localhost:3000/?invite=' + inviteCode;
 
                 /* Send invitation email */
-                email.mailer.sendMail(ops, function(err, inf){
+                mail.mailer.sendMail(ops, function(err, inf){
                     console.log(err);
                     console.log(inf);
                 });
