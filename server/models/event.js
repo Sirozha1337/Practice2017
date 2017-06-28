@@ -66,8 +66,7 @@ module.exports = {
         /* Create invite code */
         var inviteCode = bcrypt.hashSync(eventId+email);
 
-        console.log(mail.mailOptions);
-
+       
         /* Save invitation to database */
         db.run("INSERT INTO invites(eventId, inviteCode) VALUES(?, ?)", eventId, inviteCode);
 
@@ -82,6 +81,7 @@ module.exports = {
                 var ops = mail.mailOptions;
                 ops.to = email;
                 ops.text = 'http://localhost:3000/?invite=' + inviteCode;
+                console.log(ops);
 
                 /* Send invitation email */
                 mail.mailer.sendMail(ops, function(err, inf){
