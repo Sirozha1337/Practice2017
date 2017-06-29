@@ -1,20 +1,20 @@
 <div>
-<div class="container">
-<div style="margin: 0 auto;max-width: 330px;padding: 15px;">
-<form ng-controller="localLoginCtrl" ng-submit="localLogin()">
-    <p ng-bind="localLoginError"></p>
-    <div>
-      <h2>Please log in</h2>
-      <input ng-model="localEmail" class="form-control" placeholder="Email address" type="text" name="email"/>
-      <input ng-model="localPass" class="form-control" placeholder="Password" type="password" name="password"/>
-    </div>
-    <div>
+  <div class="container">
+    <div style="margin: 0 auto;max-width: 330px;padding: 15px;">
+      <form ng-controller="localLoginCtrl" ng-submit="localLogin()">
+	<p ng-bind="localLoginError"></p>
+	<div>
+	  <h2>Please log in</h2>
+	  <input ng-model="localEmail" class="form-control" placeholder="Email address" type="text" name="email"/>
+	  <input ng-model="localPass" class="form-control" placeholder="Password" type="password" name="password"/>
+	</div>
+	<div>
         <input type="submit" class="btn btn-lg btn-primary btn-block" value="Log In"/>
+	</div>
+	<a href="/auth/google"> <img src="./images/google.png" height="60" width="300"></a>
+	<a href="/auth/facebook"><img src="./images/facebook.png" height="60" width="300"></a>
+      </form>
+      <a href="/#!register">Register</a>
     </div>
-    <a href="/auth/google"> <img src="./images/google.png" height="60" width="300"></a>
-    <a href="/auth/facebook"><img src="./images/facebook.png" height="60" width="300"></a>
-</form>
-<a href="/#!register">Register</a>
-</div>
-</div>
+  </div>
 </div>

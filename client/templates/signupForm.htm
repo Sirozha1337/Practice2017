@@ -1,19 +1,17 @@
-<form action="/signup" method="post" ng-controller="mainController">
-    <div>
-        <label>Name:</label>
-        <input type="text" name="name"/>
+<div>
+  <div class="container">
+    <div style="margin: 0 auto;max-width: 330px;padding: 15px;">
+      <form action="/signup" method="post" ng-controller="mainController">
+	<div>
+	  <h2>Registration</h2>
+	  <input class="form-control" placeholder="Name" type="text" name="name"/>
+          <input class="form-control" placeholder="Email address" type="text" name="email"/>
+          <input  class="form-control" placeholder="Password" type="password" name="password"/>
+          <input class="btn btn-lg btn-primary btn-block" type="submit" value="Sign Up"/>
+	</div>
+	<a href="/auth/google"> <img src="./images/google.png" height="60" width="300"></a>
+	<a href="/auth/facebook"><img src="./images/facebook.png" height="60" width="300"></a>
+      </form>
     </div>
-    <div>
-        <label>Email:</label>
-        <input type="text" name="email"/>
-    </div>
-    <div>
-        <label>Password:</label>
-        <input type="password" name="password"/>
-    </div>
-    <div>
-        <input type="submit" value="Log In"/>
-    </div>
-    <a href="/auth/google">Sign in with Google</a>
-    <a href="/auth/facebook">Sign in with Facebook</a>
-</form>
+  </div>
+</div>
