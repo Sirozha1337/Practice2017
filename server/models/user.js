@@ -9,41 +9,33 @@ db.serialize(function() {
 });
 
 module.exports = {
-    // Class representing the user
-    User: class{
-        constructor(name, email, password){
-            this.name = name;
-            this.email = email;
-            var user = this;
-            if(password !== undefined)
-                this.passwordHash = bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
-            else
-                this.passwordHash = null;
-        }
-
-        // Save user model to database
-        save(callback){
-            var user = this;
-            db.run("INSERT INTO users(name, email, passwordHash) VALUES ('" + this.name + "','" + this.email + "','" + this.passwordHash + "')", 
-                function(err){
-                    if(err){
-                        console.log('Erorr saving user to database:' + err);
-                    }
-                    else{
-                        user.id = this.lastID;
-                        if(callback)
-                            callback(user);
-                    }
-            });
-        }
-
+    // Save user model to database
+    addUser: function(name, email, password, callback){
+        var user = {};
+        user.name = name;
+        user.email = email;
+        if(password)
+            user.password = bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
+        else
+            user.password = null;
+        db.run("INSERT INTO users(name, email, passwordHash) VALUES ('" + user.name + "','" + user.email + "','" + user.password + "')", 
+            function(err){
+                if(err){
+                    console.log('Erorr saving user to database:' + err);
+                }
+                else{
+                    user.id = this.lastID;
+                    if(callback)
+                        callback(user);
+                }
+        });
     },
     validPassword: function(hash, password){
             return bcrypt.compareSync(password, hash);
     },
     // find user in db by his email
     findUserByEmail: function (email, callback){
-        db.all("SELECT * from users WHERE email = ?", email, function(err, rows){
+        db.all("SELECT * from users WHERE email=?", email, function(err, rows){
             if(err){
                 console.log("Can't find user by email" + err);
                 return callback(false);
@@ -53,8 +45,5 @@ module.exports = {
             }
             return callback(rows);
         });
-    },
-    addToEvent : function (userId, inviteCode){
-        db.run("UPDATE invites SET userId=?, inviteCode=NULL WHERE inviteCode=?", user.id, inviteCode);
     }
 }

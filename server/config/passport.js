@@ -21,11 +21,10 @@ module.exports = function(passport){
                 return done(null, false, { message: 'email is already taken'});
             }
             else{
-                var newUser = new User.User(req.body.name, email, password);
-                newUser.save(function(user){
+                User.addUser(req.body.name, email, password, function(user){
                     Event.addUserToEvent(user.id, req.session.inviteCode);
+                    return done(null, user);
                 });
-                return done(null, newUser);
             }
         });
     }));
@@ -60,11 +59,14 @@ module.exports = function(passport){
                 return done(null, status[0]);
             }
             else {
-                var newUser = new User.User(profile.name.familyName + ' ' + profile.name.givenName, profile.emails[0].value);
-                newUser.save(function(user){
-                    Event.addUserToEvent(user.id, req.session.inviteCode);
-                });
-                return done(null, newUser);
+                User.addUser(profile.name.familyName + ' ' + profile.name.givenName, 
+                    profile.emails[0].value, 
+                    null, 
+                    function(user){
+                        Event.addUserToEvent(user.id, req.session.inviteCode);
+                        return done(null, user);
+                    }
+                );
             }
         });
     }
@@ -83,11 +85,14 @@ module.exports = function(passport){
                 return done(null, status[0]);
             }
             else {
-                var newUser = new User.User(profile.name.familyName + ' ' + profile.name.givenName, profile.emails[0].value);
-                newUser.save(function(user){
-                    Event.addUserToEvent(user.id, req.session.inviteCode);
+                User.addUser(profile.name.familyName + ' ' + profile.name.givenName, 
+                    profile.emails[0].value, 
+                    null, 
+                    function(user){
+                        Event.addUserToEvent(user.id, req.session.inviteCode);
+                    return done(null, user);
                 });
-                return done(null, newUser);
+
             }
         });
     }));

@@ -5,10 +5,13 @@ var url = require('url');
 
 module.exports = function(app, passport){
     app.post('/newEvent', function(req, res){
-        var newEvent = new Event.Event(req.body.name, req.body.description, req.user.id);
-        newEvent.save(function(result){
-            res.end(JSON.stringify(result));
-        });
+        Event.addEvent(req.body.name, 
+            req.body.description, 
+            req.user.id, 
+            function(result){
+                res.end(JSON.stringify(result));
+            }
+        );
     });
 
     app.get('/', function(req, res){
