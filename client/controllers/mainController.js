@@ -83,7 +83,7 @@ app.controller('securedPageCtrl', function($scope, $rootScope, $http, $location)
 	else{
 	    $scope.showid = index;
 	    var getlist = {};
-	    getlist.eventId = index;
+	    getlist.eventId = $scope.events[index]["id"];
 	    console.log(getlist.eventId);
 	    $http.get('/usersInEvent', getlist).then( function(response){
 		$scope.invites[index] = response.data;
