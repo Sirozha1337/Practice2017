@@ -14,10 +14,6 @@ app.config(function($routeProvider){
         templateUrl : "/templates/securedPage.htm",
         controller: 'securedPageCtrl'
     })
-    .when('/page', {
-        templateUrl : "/templates/page.htm",
-        controller: 'PageCtrl'
-    })
     .when('/register',{
         templateUrl : "/templates/signupForm.htm",
         controller: 'SignInCtrl'
@@ -114,16 +110,7 @@ app.controller('NewEventFormCtrl', function($scope, $rootScope, $http, $location
     
 });
 
-app.controller('NewPersonFormCtrl', function($scope, $rootScope, $http, $location) {
-    if(typeof $rootScope.eventId == 'undefined')
-	$location.url('/securedPage');
-});
-
 app.controller('SignInCtrl', function($scope, $rootScope, $http, $location) {
-
-});
-
-app.controller('PageCtrl', function($scope, $rootScope, $http, $location) {
 
 });
 
