@@ -10,7 +10,7 @@ db.serialize(function() {
     db.run("CREATE TABLE IF NOT EXISTS invites (eventId INTEGER NOT NULL, userId INTEGER NULL, inviteCode TEXT NULL)");
 });
 
-module.exports = {
+var self = module.exports = {
     Event: class{
         constructor(name, description, ownerId){
             this.name = name;
@@ -26,7 +26,7 @@ module.exports = {
                 this.ownerId, 
                 function(err){
                     if(err){
-                        console.log('DB error : ' + err);
+                        console.log('Error adding new event: ' + err);
                     }
                     else{
                         console.log('New event ID ' + this.lastID);
@@ -39,7 +39,7 @@ module.exports = {
     findEventsByOwner: function (ownerId, callback){
         db.all("SELECT * from events WHERE ownerId = ?", ownerId, function(err, rows){
             if(err){
-                console.log(err);
+                console.log('Error getting events by owner'+err);
                 return callback(false);
             }
             if(rows.length == 0){
@@ -52,7 +52,7 @@ module.exports = {
     findUsersByEvent: function (eventId, callback){
         db.all("SELECT users.* from users INNER JOIN invites ON users.id=invites.userId WHERE invites.eventId=?", eventId, function(err, rows){
             if(err){
-                console.log(err);
+                console.log('Error finding users in this event'+err);
                 return callback(false);
             }
             if(rows.length == 0){
@@ -74,7 +74,7 @@ module.exports = {
         db.all("SELECT users.id from users WHERE users.email=?", email, function(err, rows){
             if(rows.length > 0){
                 var userId = rows[0].id;
-                db.run("UPDATE invites SET userId=?, inviteCode=NULL WHERE invites.inviteCode=?", userId, inviteCode);
+                self.addUserToEvent(userId, inviteCode);
             }
             else{
                 /* Get mailing options */
@@ -85,15 +85,24 @@ module.exports = {
 
                 /* Send invitation email */
                 mail.mailer.sendMail(ops, function(err, inf){
-                    console.log(err);
-                    console.log(inf);
+                    if(err)
+                        console.log('Error sending email:' + err);
                 });
             }
         });
     },
+    addUserToEvent: function(userId, inviteCode){
+       db.run("UPDATE invites SET userId=?, inviteCode=NULL WHERE invites.inviteCode=?", userId, inviteCode, 
+       function(err, rows){
+            if(err)
+                console.log('Error redeeming the invite:' + err);
+       }); 
+    },
     findEventsByUser: function(userId, callback){
         db.all("SELECT events.* FROM events INNER JOIN invites ON events.id=invites.eventId WHERE invites.userId=? UNION SELECT * FROM events WHERE events.ownerId=? ORDER BY events.id DESC", userId, userId, function(err, rows){
-            callback(err, rows);
+            if(err)
+                console.log('Error getting events for user:' + err);
+            callback(rows);
         });
     }
 }
