@@ -63,10 +63,14 @@ module.exports = function(app, passport){
     });
 
     app.get('/myEvents', function(req, res){
-        Event.findEventsByUser(req.user.id, function(err, rows){
-            if(err)
-                console.log(err);
-            res.end(JSON.stringify(rows));
+        Event.findEventsByUser(req.user.id, function(events){
+            res.end(JSON.stringify(events));
+        });
+    });
+
+    app.get('/usersInEvent', function(req, res){
+        Event.findUsersByEvent(req.body.eventId, function(users){
+            res.end(JSON.stringify(users));
         });
     });
 

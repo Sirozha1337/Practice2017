@@ -4,6 +4,7 @@ var LocalStrategy   = require('passport-local').Strategy;
 
 var configAuth = require('./auth');
 var User = require('../models/user.js');
+var Event = require('../models/event.js');
 var url = require('url');
 
 
@@ -48,9 +49,16 @@ module.exports = function(passport){
     passport.use(new GoogleStrategy({
         clientID: configAuth.googleAuth.clientID,
         clientSecret: configAuth.googleAuth.clientSecret,
-        callbackURL: configAuth.googleAuth.callbackURL
+        callbackURL: configAuth.googleAuth.callbackURL,
+        passReqToCallback : true
     },
-    function(accessToken, refreshToken, profile, done) {
+    function(req, accessToken, refreshToken, profile, done) {
+        //console.log(req);
+        //var parsedUrl = url.parse(req.headers.referer, true);
+        //var inviteCode = parsedUrl.query.invite;
+       // console.log('Invite code ' + inviteCode);
+       var inviteCode = 'sdfsdf';
+       console.log('g');
         User.findUserByEmail(profile.emails[0].value, function(status){
             if (status) {
                 return done(null, status[0]);
@@ -73,19 +81,16 @@ module.exports = function(passport){
     },
     function(req, accessToken, refreshToken, profile, done) {
         var parsedUrl = url.parse(req.headers.referer, true);
-        var invite = parsedUrl.query.invite;
-        console.log('Invite code ' + invite);
+        var inviteCode = parsedUrl.query.invite;
+        console.log('Invite code ' + inviteCode);
         User.findUserByEmail(profile.emails[0].value, function(status){
             if (status) {
-                console.log(status);
-                if(invite)
-                    User.addToEvent(status[0].id, invite);
                 return done(null, status[0]);
             }
             else {
                 var newUser = new User.User(profile.name.familyName + ' ' + profile.name.givenName, profile.emails[0].value);
                 newUser.save(function(user){
-                    User.addToEvent(user.id, invite);
+                    Event.addUserToEvent(user.id, inviteCode);
                 });
                 return done(null, newUser);
             }

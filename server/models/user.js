@@ -31,7 +31,8 @@ module.exports = {
                     }
                     else{
                         user.id = this.lastID;
-                        callback(user);
+                        if(callback)
+                            callback(user);
                     }
             });
         }
