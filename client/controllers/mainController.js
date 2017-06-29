@@ -7,25 +7,19 @@ var app = angular.module('SEManager', ["ngRoute"]).controller('mainController',
 app.config(function($routeProvider){
     $routeProvider
     .when('/', {
-        templateUrl : "/templates/loginForm.htm",
-        controller: 'LoginCtrl'
+        templateUrl : "/templates/loginForm.htm"
     })
     .when('/securedPage', {
         templateUrl : "/templates/securedPage.htm",
         controller: 'securedPageCtrl'
     })
     .when('/register',{
-        templateUrl : "/templates/signupForm.htm",
-        controller: 'SignInCtrl'
+        templateUrl : "/templates/signupForm.htm"
     })
     .when('/addEvent',{
         templateUrl : "/templates/newEventForm.htm",
         controller: 'NewEventFormCtrl'
     })
-});
-
-app.controller('LoginCtrl', function($scope, $rootScope, $http) {
-
 });
 
 app.controller('securedPageCtrl', function($scope, $rootScope, $http, $location) {
@@ -82,9 +76,12 @@ app.controller('securedPageCtrl', function($scope, $rootScope, $http, $location)
 	    $scope.showid = -1;
 	else{
 	    $scope.showid = index;
-	    var getlist = {};
-	    getlist.eventId = $scope.events[index]["id"];
-	    console.log(getlist.eventId);
+	    var getlist = {
+			params:{
+				eventId: $scope.events[index]["id"]
+			}
+		}
+	    console.log(getlist);
 	    $http.get('/usersInEvent', getlist).then( function(response){
 		$scope.invites[index] = response.data;
 		console.log(response);
@@ -126,8 +123,3 @@ app.controller('NewEventFormCtrl', function($scope, $rootScope, $http, $location
     }
     
 });
-
-app.controller('SignInCtrl', function($scope, $rootScope, $http, $location) {
-
-});
-

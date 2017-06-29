@@ -29,6 +29,7 @@ module.exports = function(passport){
         });
     }));
 
+    /* Local login strategy */
     passport.use('local-login', new LocalStrategy({
         usernameField: 'email',
         passwordField: 'password',
@@ -47,6 +48,7 @@ module.exports = function(passport){
         });
     }));
 
+    /* Google sign-in strategy */
     passport.use(new GoogleStrategy({
         clientID: configAuth.googleAuth.clientID,
         clientSecret: configAuth.googleAuth.clientSecret,
@@ -67,11 +69,11 @@ module.exports = function(passport){
                         return done(null, user);
                     }
                 );
-            }
+            };
         });
-    }
-    ));
+    }));
 
+    /* Facebook sign-in strategy */
     passport.use(new FacebookStrategy({
         clientID: configAuth.facebookAuth.clientID,
         clientSecret: configAuth.facebookAuth.clientSecret,
@@ -90,10 +92,9 @@ module.exports = function(passport){
                     null, 
                     function(user){
                         Event.addUserToEvent(user.id, req.session.inviteCode);
-                    return done(null, user);
-                });
-
-            }
+                        return done(null, user);
+                    });
+            };
         });
     }));
 

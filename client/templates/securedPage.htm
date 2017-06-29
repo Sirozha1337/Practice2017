@@ -20,8 +20,8 @@
 	    <button ng-click="showPerson($index)" class="btn btn-primary btn-block">View list of invites</button>
 	    <div ng-show="showid==$index">
 	      <ul class="list-group">
-		<div ng-repeat="y in invites[index]">
-		  <li class="list-group-item">{{y.name}}</li>
+		<div ng-repeat="y in invites[$index]">
+		  <li class="list-group-item">{{y.name + "(" + y.email + ")"}}</li>
 		</div>
 	      </ul>
 	    </div>

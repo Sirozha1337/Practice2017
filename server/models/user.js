@@ -4,7 +4,6 @@ var bcrypt  = require('bcrypt-nodejs');
 
 // Establish database connection
 db.serialize(function() {
-   // db.run("DROP TABLE users");
     db.run("CREATE TABLE IF NOT EXISTS users (name TEXT NOT NULL, email TEXT NOT NULL, passwordHash TEXT NULL, id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)");
 });
 
@@ -14,6 +13,7 @@ module.exports = {
         var user = {};
         user.name = name;
         user.email = email;
+        // If it was local-signup hash password
         if(password)
             user.password = bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
         else
@@ -30,8 +30,12 @@ module.exports = {
                 }
         });
     },
+    // Compare password to passwordHash
     validPassword: function(hash, password){
+        if(hash != 'null')
             return bcrypt.compareSync(password, hash);
+        else
+            return false;
     },
     // find user in db by his email
     findUserByEmail: function (email, callback){

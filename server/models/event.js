@@ -10,6 +10,7 @@ db.serialize(function() {
 });
 
 var self = module.exports = {
+    // Add new event to database
     addEvent: function(name, description, ownerId, callback){
         var event = {};
         event.name = name;
@@ -30,32 +31,17 @@ var self = module.exports = {
                     }
         });
     },
-    findEventsByOwner: function (ownerId, callback){
-        db.all("SELECT * from events WHERE ownerId = ?", ownerId, function(err, rows){
-            if(err){
-                console.log('Error getting events by owner'+err);
-                return callback(false);
-            }
-            if(rows.length == 0){
-                console.log('no events');
-                return callback(false);
-            }
-            return callback(rows);
-        });
-    },
+    // Get users, who are invited to this event
     findUsersByEvent: function (eventId, callback){
-        db.all("SELECT users.* from users INNER JOIN invites ON users.id=invites.userId WHERE eventId=? UNION SELECT users.* FROM users, events WHERE users.id=events.ownerId AND events.ownerId=?", eventId, eventId, function(err, rows){
+        db.all("SELECT users.* from users INNER JOIN invites ON users.id=invites.userId WHERE eventId=? UNION SELECT users.* FROM users, events WHERE users.id=events.ownerId AND events.id=?", eventId, eventId, function(err, rows){
             if(err){
-                console.log('Error finding users in this event:'+err);
-                return callback(false);
-            }
-            if(rows.length == 0){
-                console.log('no users');
+                console.log('Error finding users in this event:' + err);
                 return callback(false);
             }
             return callback(rows);
         });
     },
+    // Invite user by email
     createInvite: function(eventId, email){
         /* Create invite code */
         var inviteCode = bcrypt.hashSync(eventId+email);
@@ -85,6 +71,7 @@ var self = module.exports = {
             }
         });
     },
+    // Redeem invite code for specified user
     addUserToEvent: function(userId, inviteCode){
        db.run("UPDATE invites SET userId=?, inviteCode=NULL WHERE invites.inviteCode=?", userId, inviteCode, 
        function(err, rows){
@@ -92,6 +79,7 @@ var self = module.exports = {
                 console.log('Error redeeming the invite:' + err);
        }); 
     },
+    // Get a list of events this user has access to
     findEventsByUser: function(userId, callback){
         db.all("SELECT events.* FROM events INNER JOIN invites ON events.id=invites.eventId WHERE invites.userId=? UNION SELECT * FROM events WHERE events.ownerId=? ORDER BY events.id DESC", userId, userId, function(err, rows){
             if(err)
