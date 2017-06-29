@@ -27,7 +27,7 @@ module.exports = {
             db.run("INSERT INTO users(name, email, passwordHash) VALUES ('" + this.name + "','" + this.email + "','" + this.passwordHash + "')", 
                 function(err){
                     if(err){
-                        console.log('DB error:' + err);
+                        console.log('Erorr saving user to database:' + err);
                     }
                     else{
                         user.id = this.lastID;
@@ -45,7 +45,7 @@ module.exports = {
     findUserByEmail: function (email, callback){
         db.all("SELECT * from users WHERE email = ?", email, function(err, rows){
             if(err){
-                console.log(err);
+                console.log("Can't find user by email" + err);
                 return callback(false);
             }
             if(rows.length == 0){

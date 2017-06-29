@@ -9,8 +9,6 @@ var passport = require('passport');
 var passportConfig = require('./server/config/passport');
 passportConfig(passport);
 
-app.use(express.static(__dirname + '/client/'));
-
 // Cookie and request body parsers
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -31,6 +29,8 @@ app.use(passport.session());
 // Set up routes
 var routes = require('./server/routes.js');
 routes(app, passport);
+
+app.use(express.static(__dirname + '/client/'));
 
 // Start up the server
 console.log('App listens on port 3000');

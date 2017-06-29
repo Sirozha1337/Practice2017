@@ -26,7 +26,7 @@ var self = module.exports = {
                 this.ownerId, 
                 function(err){
                     if(err){
-                        console.log('DB error : ' + err);
+                        console.log('Error adding new event: ' + err);
                     }
                     else{
                         console.log('New event ID ' + this.lastID);
@@ -39,7 +39,7 @@ var self = module.exports = {
     findEventsByOwner: function (ownerId, callback){
         db.all("SELECT * from events WHERE ownerId = ?", ownerId, function(err, rows){
             if(err){
-                console.log(err);
+                console.log('Error getting events by owner'+err);
                 return callback(false);
             }
             if(rows.length == 0){
@@ -52,7 +52,7 @@ var self = module.exports = {
     findUsersByEvent: function (eventId, callback){
         db.all("SELECT users.* from users INNER JOIN invites ON users.id=invites.userId WHERE invites.eventId=?", eventId, function(err, rows){
             if(err){
-                console.log(err);
+                console.log('Error finding users in this event'+err);
                 return callback(false);
             }
             if(rows.length == 0){

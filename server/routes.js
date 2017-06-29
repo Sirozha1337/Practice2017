@@ -1,5 +1,7 @@
 var path = require('path');
 var Event = require('./models/event.js');
+var invTemp;
+var url = require('url');
 
 module.exports = function(app, passport){
     app.post('/newEvent', function(req, res){
@@ -7,6 +9,13 @@ module.exports = function(app, passport){
         newEvent.save(function(result){
             res.end(JSON.stringify(result));
         });
+    });
+
+    app.get('/', function(req, res){
+        var parsedUrl = url.parse(req.url, true);
+        if(parsedUrl.query.invite)
+            req.session.inviteCode = parsedUrl.query.invite;
+        res.sendFile(path.join(__dirname,'../client/index.html'));
     });
 
     app.get('/currentUser', function(req, res){
@@ -57,7 +66,6 @@ module.exports = function(app, passport){
     });
 
     app.post('/newInvite', function(req, res){
-        console.log('new Invite:');
         Event.createInvite(req.body.eventId, req.body.email);
         res.end();
     });

@@ -22,7 +22,9 @@ module.exports = function(passport){
             }
             else{
                 var newUser = new User.User(req.body.name, email, password);
-                newUser.save();
+                newUser.save(function(user){
+                    Event.addUserToEvent(user.id, req.session.inviteCode);
+                });
                 return done(null, newUser);
             }
         });
@@ -53,19 +55,15 @@ module.exports = function(passport){
         passReqToCallback : true
     },
     function(req, accessToken, refreshToken, profile, done) {
-        //console.log(req);
-        //var parsedUrl = url.parse(req.headers.referer, true);
-        //var inviteCode = parsedUrl.query.invite;
-       // console.log('Invite code ' + inviteCode);
-       var inviteCode = 'sdfsdf';
-       console.log('g');
         User.findUserByEmail(profile.emails[0].value, function(status){
             if (status) {
                 return done(null, status[0]);
             }
             else {
                 var newUser = new User.User(profile.name.familyName + ' ' + profile.name.givenName, profile.emails[0].value);
-                newUser.save();
+                newUser.save(function(user){
+                    Event.addUserToEvent(user.id, req.session.inviteCode);
+                });
                 return done(null, newUser);
             }
         });
@@ -80,9 +78,6 @@ module.exports = function(passport){
         passReqToCallback : true
     },
     function(req, accessToken, refreshToken, profile, done) {
-        var parsedUrl = url.parse(req.headers.referer, true);
-        var inviteCode = parsedUrl.query.invite;
-        console.log('Invite code ' + inviteCode);
         User.findUserByEmail(profile.emails[0].value, function(status){
             if (status) {
                 return done(null, status[0]);
@@ -90,7 +85,7 @@ module.exports = function(passport){
             else {
                 var newUser = new User.User(profile.name.familyName + ' ' + profile.name.givenName, profile.emails[0].value);
                 newUser.save(function(user){
-                    Event.addUserToEvent(user.id, inviteCode);
+                    Event.addUserToEvent(user.id, req.session.inviteCode);
                 });
                 return done(null, newUser);
             }
