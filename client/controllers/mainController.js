@@ -31,6 +31,8 @@ app.controller('LoginCtrl', function($scope, $rootScope, $http) {
 app.controller('securedPageCtrl', function($scope, $rootScope, $http, $location) {
     $scope.id = -1;
     $scope.emails = [];
+    $scope.invites = [];
+    $scope.showid = -1;
     if(typeof $rootScope.user == 'undefined'){
 	$http.get("/currentUser").then(function(response) {
 	    if(response.data === '')
@@ -73,6 +75,20 @@ app.controller('securedPageCtrl', function($scope, $rootScope, $http, $location)
 	    $scope.id = -1;
 	    $scope.emails[index] = "";
 	});
+    }
+
+    $scope.showPerson = function(index) {
+	if($scope.showid == index)
+	    $scope.showid = -1;
+	else{
+	    $scope.showid = index;
+	    var getlist = {};
+	    getlist.eventId = index;
+	    $http.get('/usersInEvent', getlist).then( function(response){
+		$scope.invites[index] = response.data;
+		console.log(response);
+	    });
+	}
     }
 });
 

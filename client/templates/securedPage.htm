@@ -14,8 +14,16 @@
 	  <div class="panel-footer">
 	    <button ng-click="addPerson($index)" class="btn btn-primary btn-block">Invite person</button>
 	    <div ng-show="id==$index" style="margin:15px;">
-	      <input ng-model="emails[$index]" class="form-control" placeholder="Email address">
+	      <input ng-model="emails[$index]" class="form-control" type="email" placeholder="Email address">
 	      <button ng-click="postInvite($index)" class="btn btn-success btn-block">Invite</button>
+	    </div>
+	    <button ng-click="showPerson($index)" class="btn btn-primary btn-block">View list of invites</button>
+	    <div ng-show="showid==$index">
+	      <ul class="list-group">
+		<div ng-repeat="y in invites[index]">
+		  <li class="list-group-item">{{y.name}}</li>
+		</div>
+	      </ul>
 	    </div>
 	  </div>
 	</div>
