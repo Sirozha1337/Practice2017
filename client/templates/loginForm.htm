@@ -2,7 +2,7 @@
   <div class="container">
     <div style="margin: 0 auto;max-width: 330px;padding: 15px;">
       <form ng-controller="localLoginCtrl" ng-submit="localLogin()">
-	<p ng-bind="localLoginError"></p>
+	<div ng-show="errid==1" class="alert alert-danger"><strong ng-bind="localLoginError"></strong></div>
 	<div>
 	  <h2>Please log in</h2>
 	  <input ng-model="localEmail" class="form-control" placeholder="Email address" type="text" name="email"/>
