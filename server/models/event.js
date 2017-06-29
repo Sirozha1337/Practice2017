@@ -44,7 +44,7 @@ var self = module.exports = {
         });
     },
     findUsersByEvent: function (eventId, callback){
-        db.all("SELECT users.* from users INNER JOIN invites ON users.id=invites.userId WHERE eventId=?", eventId, function(err, rows){
+        db.all("SELECT users.* from users INNER JOIN invites ON users.id=invites.userId WHERE eventId=? UNION SELECT users.* FROM users, events WHERE users.id=events.ownerId AND events.ownerId=?", eventId, eventId, function(err, rows){
             if(err){
                 console.log('Error finding users in this event:'+err);
                 return callback(false);
