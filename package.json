@@ -2,12 +2,10 @@
   "name": "node-authentication",
   "main": "server.js",
   "dependencies" : {
-    "express" : "~4.8.0",             
-    "mongoose" : "~3.8.1",          
+    "express" : "~4.8.0",           
     "passport" : "~0.1.17",         
     "passport-local" : "~0.1.6",    
     "passport-facebook" : "~1.0.2", 
-    "passport-twitter" : "~1.0.2",  
     "passport-google-oauth" : "~0.1.5",
     "sqlite3" : "~3.1.8",
     "body-parser": "~1.0.0",

@@ -44,6 +44,9 @@ module.exports = function(passport){
             if(!User.validPassword(user.passwordHash, password))
                 return done(null, false, {message: 'invalid password'});
             
+            if(req.session.inviteCode)
+                Event.addUserToEvent(user.id, req.session.inviteCode);
+            
             return done(null, user);
         });
     }));
@@ -58,6 +61,8 @@ module.exports = function(passport){
     function(req, accessToken, refreshToken, profile, done) {
         User.findUserByEmail(profile.emails[0].value, function(status){
             if (status) {
+                if(req.session.inviteCode)
+                    Event.addUserToEvent(status[0].id, req.session.inviteCode);
                 return done(null, status[0]);
             }
             else {
@@ -84,6 +89,8 @@ module.exports = function(passport){
     function(req, accessToken, refreshToken, profile, done) {
         User.findUserByEmail(profile.emails[0].value, function(status){
             if (status) {
+                if(req.session.inviteCode)
+                    Event.addUserToEvent(status[0].id, req.session.inviteCode);
                 return done(null, status[0]);
             }
             else {
